@@ -19,3 +19,36 @@ def personal_independence(income, ave_expenses):
 #%%md
 #Transaction
 #%%
+from functools import reduce
+class Transaction:
+    def __init__(self, account_, account_id_, recipient_account_, amount_):
+        self.account = account
+        self.account_id = account_id_
+        self.recipient_account = recipient_account_
+        self.amount = amount_
+        self.signature = self.sign_transaction()
+
+    def to_dict(self):
+        return OrderedDict({'sender account': self.account,
+                'recipient account': self.recipient_account,
+                'amount': self.amount})
+
+    def sign_transaction(self):
+        """
+        Sign transaction with private key/account ID
+        """
+        private_key = RSA.importKey(binascii.unhexlify(self.account_id))
+        signer = PKCS1_v1_5.new(private_key)
+        h = SHA.new(str(self.to_dict()).encode('utf8'))
+        return binascii.hexlify(signer.sign(h)).decode('ascii')
+
+    def verify_transaction_signature(self, account, signature, transaction):
+          """
+          Check that the provided signature corresponds to the data
+          signed by the public key/account (author)
+          """
+          public_key = RSA.importKey(binascii.unhexlify(account))
+          verifier = PKCS1_v1_5.new(public_key)
+          h = SHA.new(str(transaction).encode('utf8'))
+          return verifier.verify(h, binascii.unhexlify(signature))
+#%%
