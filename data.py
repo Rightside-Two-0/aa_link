@@ -20,8 +20,8 @@ def personal_independence(income, ave_expenses):
 #Data
 #%%
 class Data:
-    def __init__(self, author_, block_acc, block_acc_id, filename_):
-        self.author = author_
+    def __init__(self, member, block_acc, block_acc_id, filename_):
+        self.member = member
         self.block_account = block_acc
         self.block_account_id = block_acc_id
         self.content = self.get_bytes(filename_)
